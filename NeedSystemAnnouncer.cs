@@ -5,6 +5,7 @@ using CounterStrikeSharp.API.Modules.Timers;
 
 using NeedSystemAnnouncer.Services;
 using NeedSystemAnnouncer.Configs;
+using NeedSystemAnnouncer.Utils;
 
 namespace NeedSystemAnnouncer;
 
@@ -17,7 +18,7 @@ public class NeedSystemAnnouncerBase : BasePlugin, IPluginConfig<BaseConfigs>
     private CounterStrikeSharp.API.Modules.Timers.Timer? _cleanupTimer;
 
     public override string ModuleName => "NeedSystem-Announcer";
-    public override string ModuleVersion => "0.0.1";
+    public override string ModuleVersion => "0.0.3";
     public override string ModuleAuthor => "luca.uy";
     public override string ModuleDescription => "Shows the latest NeedSystem notification in-game.";
 
@@ -26,6 +27,12 @@ public class NeedSystemAnnouncerBase : BasePlugin, IPluginConfig<BaseConfigs>
     public override void Load(bool hotReload)
     {
         InitializeServices();
+
+        Server.NextFrame(() =>
+        {
+            ServerHelper.UpdateCachedServerAddress();
+        });
+
         StartAnnouncementTimer();
         StartCleanupTimer();
         _ = InitializeDatabaseAsync();
@@ -35,6 +42,12 @@ public class NeedSystemAnnouncerBase : BasePlugin, IPluginConfig<BaseConfigs>
     {
         Config = config;
         InitializeServices();
+
+        Server.NextFrame(() =>
+        {
+            ServerHelper.UpdateCachedServerAddress();
+        });
+
         StartAnnouncementTimer();
         StartCleanupTimer();
         _ = InitializeDatabaseAsync();

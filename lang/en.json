@@ -1,4 +1,4 @@
 ﻿{
   "Prefix": "[{GOLD}NEED{BLUE}SYSTEM{WHITE}]",
-  "notification.players_needed": "{Gold}[NEED]{Default} Players needed on {Green}{0}{Default} | Map: {Blue}{1}{Default} | Players: {Orange}{2}/{3}{Default} | Requested by: {Purple}{4}{Default}"
+  "notification.players_needed": "Players needed on {Green}{0}{Default} | Map: {Blue}{1}{Default} | Players: {Orange}{2}/{3}{Default} | Requested by: {Purple}{4}{Default}"
 }

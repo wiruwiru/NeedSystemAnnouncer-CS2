@@ -23,11 +23,12 @@ public class AnnouncementService
     {
         try
         {
-            string currentServerAddress = ServerHelper.GetCurrentServerAddress();
+            // Usar la versión en caché que es segura para threads
+            string currentServerAddress = ServerHelper.GetCachedServerAddress();
 
             if (string.IsNullOrEmpty(currentServerAddress))
             {
-                LogWarning("Could not determine current server address");
+                LogWarning("Could not determine current server address from cache");
                 return;
             }
 
@@ -47,6 +48,9 @@ public class AnnouncementService
                 return;
             }
 
+            // Capturar la dirección del servidor actual para usarla en el NextFrame
+            string serverAddress = currentServerAddress;
+
             Server.NextFrame(() =>
             {
                 try
@@ -59,14 +63,25 @@ public class AnnouncementService
                     {
                         _recentAnnouncements.Enqueue(DateTime.Now);
                     }
+
+                    // Marcar como procesado de forma asíncrona después del anuncio
+                    _ = Task.Run(async () =>
+                    {
+                        try
+                        {
+                            await _databaseService.MarkNotificationAsProcessed(notification.Uuid, serverAddress);
+                        }
+                        catch (Exception ex)
+                        {
+                            LogError($"Error marking notification as processed: {ex.Message}");
+                        }
+                    });
                 }
                 catch (Exception ex)
                 {
                     LogError($"Error announcing on main thread: {ex.Message}");
                 }
             });
-
-            await _databaseService.MarkNotificationAsProcessed(notification.Uuid, currentServerAddress);
         }
         catch (Exception ex)
         {
@@ -91,12 +106,12 @@ public class AnnouncementService
 
     private string FormatAnnouncementMessage(Models.NotificationRecord notification)
     {
-        return _plugin.Localizer["notification.players_needed",
+        return $"{_plugin.Localizer["Prefix"]} {_plugin.Localizer["notification.players_needed",
             notification.ServerAddress,
             notification.MapName,
             notification.ConnectedPlayers,
             notification.MaxPlayers,
-            notification.RequestedBy];
+            notification.RequestedBy]}";
     }
 
     private void LogInfo(string message)

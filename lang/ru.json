@@ -1,0 +1,4 @@
+{
+  "Prefix": "[{GOLD}NEED{BLUE}SYSTEM{WHITE}]",
+  "notification.players_needed": "{Gold}[NEED]{Default} Нужны игроки на {Green}{0}{Default} | Карта: {Blue}{1}{Default} | Игроки: {Orange}{2}/{3}{Default} | Запросил: {Purple}{4}{Default}"
+}
